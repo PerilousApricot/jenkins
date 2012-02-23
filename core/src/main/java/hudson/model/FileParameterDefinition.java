@@ -29,9 +29,11 @@ import org.kohsuke.stapler.StaplerRequest;
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.cli.CLICommand;
+import org.apache.commons.fileupload.FileItem;
 
 import java.io.IOException;
 import java.io.File;
+import javax.servlet.ServletException;
 
 /**
  * {@link ParameterDefinition} for doing file upload.
@@ -69,7 +71,20 @@ public class FileParameterDefinition extends ParameterDefinition {
 
 	@Override
 	public ParameterValue createValue(StaplerRequest req) {
-		throw new UnsupportedOperationException();
+        FileItem src;
+        try {
+            src = req.getFileItem( getName() );
+        } catch (ServletException e) {
+            // TODO Auto-generated catch block
+            return null;
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            return null;
+        }
+        FileParameterValue p = new FileParameterValue(getName(), src);
+        p.setDescription(getDescription());
+        p.setLocation(getName());
+        return p;
 	}
 
     @Override
